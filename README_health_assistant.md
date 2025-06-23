@@ -1,6 +1,6 @@
 # Health Assistant AI Agent
 
-A personal health assistant that reminds you to take medications, provides health diagnoses based on symptoms, and sends voice notes and text messages to your phone.
+A personal health assistant that reminds you to take medications, provides health diagnoses based on symptoms, and sends voice notes and text messages to your phone. This AI agent helps you stay on top of your medication schedule and provides preliminary health information when you need it.
 
 ## Features
 
