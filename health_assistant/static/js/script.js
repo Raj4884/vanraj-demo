@@ -1,12 +1,21 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Load medications on page load
+    // Load medications and notifications on page load
     loadMedications();
+    loadNotifications();
     
     // Set up event listeners
     document.getElementById('diagnosis-form').addEventListener('submit', handleDiagnosis);
     document.getElementById('test-message-form').addEventListener('submit', sendTestMessage);
     document.getElementById('save-medication').addEventListener('click', saveMedication);
     document.getElementById('med-frequency').addEventListener('change', toggleDaysSelection);
+    
+    // Request notification permission for browser notifications
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+    
+    // Auto-refresh notifications every 30 seconds
+    setInterval(loadNotifications, 30000);
 });
 
 // Toggle days selection based on frequency
@@ -201,36 +210,106 @@ function sendTestMessage(event) {
     event.preventDefault();
     
     const message = document.getElementById('test-message').value;
+    const statusDiv = document.getElementById('message-status');
     
-    if (!message) {
-        alert('Please enter a message');
+    if (!message.trim()) {
+        statusDiv.innerHTML = '<div class="alert alert-warning">Please enter a message</div>';
         return;
     }
     
-    // Show loading state
-    document.getElementById('message-status').innerHTML = '<p>Sending message...</p>';
+    statusDiv.innerHTML = '<div class="alert alert-info">Sending notification...</div>';
     
     fetch('/api/send-test-message', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message })
+        body: JSON.stringify({ message: message })
     })
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            document.getElementById('message-status').innerHTML = 
-                '<p class="success-message">Message sent successfully!</p>';
+            let resultHtml = '<div class="alert alert-success">Notification sent successfully!</div>';
+            if (data.results) {
+                resultHtml += '<div class="mt-2"><small>';
+                data.results.forEach(result => {
+                    const status = result.status === 'success' ? '✅' : '❌';
+                    resultHtml += `${status} ${result.method}<br>`;
+                });
+                resultHtml += '</small></div>';
+            }
+            statusDiv.innerHTML = resultHtml;
             document.getElementById('test-message').value = '';
+            
+            // Show browser notification if supported
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('Health Assistant', {
+                    body: message,
+                    icon: '/static/favicon.ico'
+                });
+            }
+            
+            // Refresh notifications list
+            setTimeout(loadNotifications, 1000);
         } else {
-            document.getElementById('message-status').innerHTML = 
-                `<p class="error-message">Error: ${data.message}</p>`;
+            statusDiv.innerHTML = `<div class="alert alert-danger">Error: ${data.message}</div>`;
         }
     })
     .catch(error => {
-        console.error('Error sending message:', error);
-        document.getElementById('message-status').innerHTML = 
-            '<p class="error-message">Error sending message. Please try again.</p>';
+        statusDiv.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+    });
+}
+
+function loadNotifications() {
+    fetch('/api/notifications')
+    .then(response => response.json())
+    .then(notifications => {
+        const notificationsList = document.getElementById('notifications-list');
+        
+        if (notifications.length === 0) {
+            notificationsList.innerHTML = '<p class="text-muted">No notifications yet.</p>';
+            return;
+        }
+        
+        let html = '';
+        notifications.slice(-10).reverse().forEach(notification => {
+            const readClass = notification.read ? 'text-muted' : 'fw-bold';
+            const readIcon = notification.read ? '📖' : '📩';
+            html += `
+                <div class="notification-item border-bottom py-2 ${readClass}">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <span class="me-2">${readIcon}</span>
+                            ${notification.message}
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">${notification.timestamp}</small>
+                            ${!notification.read ? `<br><button class="btn btn-sm btn-outline-primary" onclick="markAsRead(${notification.id})">Mark as read</button>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        notificationsList.innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error loading notifications:', error);
+        document.getElementById('notifications-list').innerHTML = '<p class="text-danger">Error loading notifications.</p>';
+    });
+}
+
+function markAsRead(notificationId) {
+    fetch(`/api/notifications/${notificationId}/read`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            loadNotifications();
+        }
+    })
+    .catch(error => {
+        console.error('Error marking notification as read:', error);
     });
 }

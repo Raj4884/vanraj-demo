@@ -14,10 +14,12 @@ A personal health assistant that reminds you to take medications, provides healt
    - Receive recommendations based on your health concerns
    - Important disclaimer: This is not a substitute for professional medical advice
 
-3. **Messaging Support**
-   - Receive text messages for medication reminders
-   - Get voice calls with audio reminders
-   - Test messaging functionality directly from the web interface
+3. **Free Notification Support**
+   - Desktop notifications on your computer
+   - Email notifications via Gmail (free)
+   - Browser notifications in your web interface
+   - Voice reminders with local audio playback
+   - In-app notification center
 
 ## How to Use
 
@@ -33,10 +35,10 @@ A personal health assistant that reminds you to take medications, provides healt
    pip install -r requirements.txt
    ```
 
-3. Configure your Twilio credentials:
-   - Create a Twilio account at https://www.twilio.com/
-   - Get your Account SID, Auth Token, and a Twilio phone number
-   - Update the `.env` file with your credentials
+3. (Optional) Configure email notifications:
+   - For free email notifications, see [FREE_SETUP_GUIDE.md](health_assistant/FREE_SETUP_GUIDE.md)
+   - Uses Gmail SMTP - completely free
+   - Desktop and browser notifications work without any setup
 
 4. Run the application:
    ```
@@ -67,27 +69,35 @@ A personal health assistant that reminds you to take medications, provides healt
 3. Review the analysis results
 4. Remember: This is not a substitute for professional medical advice
 
-### Testing Messaging
+### Testing Notifications
 
 1. Enter a test message
-2. Click "Send Message"
-3. Check your phone for the message
+2. Click "Send Notification"
+3. Check for:
+   - Desktop notification popup
+   - Email (if configured)
+   - Browser notification
+   - Console output
+   - In-app notification center
 
 ## Technical Details
 
 The Health Assistant is built using:
 
 - **Flask**: Web framework for the user interface
-- **Twilio**: For sending text messages and voice calls
+- **Gmail SMTP**: For free email notifications
+- **Plyer**: For cross-platform desktop notifications
 - **gTTS (Google Text-to-Speech)**: For creating voice notes
 - **Schedule**: For scheduling medication reminders
 - **BeautifulSoup4**: For parsing health information
 
 ## Important Notes
 
-- The health diagnosis feature provides general information only and should not be used as a substitute for professional medical advice.
-- For serious or urgent health concerns, please contact a healthcare professional or emergency services.
-- Voice messaging requires proper configuration of Twilio and publicly accessible audio files.
+- **Completely Free**: No monthly costs or paid services required
+- The health diagnosis feature provides general information only and should not be used as a substitute for professional medical advice
+- For serious or urgent health concerns, please contact a healthcare professional or emergency services
+- Voice reminders are played locally on your computer
+- Email notifications are optional and use Gmail's free SMTP service
 
 ## Customization
 

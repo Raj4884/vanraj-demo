@@ -89,6 +89,16 @@ def send_test_message():
     result = message_sender.send_text_message(message)
     return jsonify(result)
 
+@app.route('/api/notifications', methods=['GET'])
+def get_notifications():
+    notifications = message_sender.get_notifications()
+    return jsonify(notifications)
+
+@app.route('/api/notifications/<int:notification_id>/read', methods=['POST'])
+def mark_notification_read(notification_id):
+    result = message_sender.mark_notification_read(notification_id)
+    return jsonify(result)
+
 def run_scheduler():
     while True:
         schedule.run_pending()
