@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart India</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Welcome to Smart India</h1>
+    <div id="dashboard-container">
+        <h2>Dashboard</h2>
+        <div id="dashboard-content"></div>
+    </div>
+    <div id="chat-container">
+        <div id="chat-box"></div>
+        <input type="text" id="user-input" placeholder="Ask for career advice...">
+        <button id="send-btn">Send</button>
+    </div>
+
+    <div id="skill-analyzer-container">
+        <h2>Skill Gap Analyzer</h2>
+        <input type="text" id="user-skills" placeholder="Enter your skills (comma-separated)">
+        <input type="text" id="desired-career" placeholder="Enter your desired career">
+        <button id="analyze-skills-btn">Analyze</button>
+        <div id="skill-analysis-result"></div>
+    </div>
+
+    <div id="resume-screener-container">
+        <h2>Resume Screener</h2>
+        <input type="file" id="resume-file">
+        <button id="screen-resume-btn">Screen Resume</button>
+        <div id="resume-screening-result"></div>
+    </div>
+
+    <div id="local-context-container">
+        <h2>Local Opportunities</h2>
+        <button id="get-local-opportunities-btn">Get Local Opportunities</button>
+        <div id="local-opportunities-result"></div>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+Flask==2.2.2
+transformers
+torch
+python-docx
+PyPDF2
