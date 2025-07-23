@@ -3,3 +3,5 @@ transformers
 torch
 python-docx
 PyPDF2
+Flask-SQLAlchemy
+Flask-Login
